@@ -1,0 +1,333 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>ArcGIS API for JavaScript Tutorials: Display a map</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.19/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.19/"></script>
+    <style>
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
+
+        .viewDivBase {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 49.9%;
+        }
+
+        #viewDiv01 {
+            float: left;
+
+
+        }
+
+        #viewDiv02 {
+            float: right;
+
+        }
+
+        #basemapSwich {
+            top: 20px;
+            right: 20px;
+            position: absolute;
+            z-index: 99;
+            background-color: white;
+            border-radius: 8px;
+            padding: 10px;
+            opacity: 0.75;
+        }
+
+        #LayerCollection {
+            top: 120px;
+            right: 20px;
+            position: absolute;
+            z-index: 99;
+            background-color: rgb(255, 251, 251);
+            border-radius: 8px;
+            padding: 10px;
+            opacity: 0.75;
+        }
+
+        #co {
+            top: 220px;
+            right: 20px;
+            position: absolute;
+            z-index: 99;
+            background-color: rgb(255, 255, 255);
+            border-radius: 8px;
+            padding: 10px;
+            opacity: 0.95;
+        }
+
+        #ruler {
+            bottom: 50px;
+            right: 30px;
+            position: absolute;
+            z-index: 99;
+            background-color: rgba(255, 255, 255, 0.24);
+            border-bottom-style: solid;
+            border-right-style: solid;
+            border-left-style: solid;
+            padding: 10px;
+
+        }
+    </style>
+
+
+
+    <script>
+        require([
+            "esri/config",
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/layers/FeatureLayer",
+            // "esri/widgets/LayerList",
+            "esri/layers/MapImageLayer",
+            "esri/layers/TileLayer",
+            "esri/core/watchUtils",
+            "esri/geometry/Point",
+            "esri/layers/CSVLayer"
+        ],
+            function (
+                esriConfig,
+                Map,
+                MapView,
+                FLayer,
+                // LayerList,
+                MapImageLayer,
+                TileLayer,
+                watchUtils,
+                gpoint,
+                CSVLayer
+            ) {
+
+                esriConfig.apiKey = "AAPK56e3ac027f044c4089d8ceec232fc05dYaOuzVRzm8tMRqvzOvDvIEevbqJ85yppn9PacU6cy4duurJrVK9wo_8BcWO8i8bi";
+
+                const map = new Map({
+                    basemap: "hybrid", // Basemap layer service
+                });
+
+                const view01 = new MapView({
+                    map: map,
+                    center: [-119, 35.027], // Longitude, latitude
+                    zoom: 3, // Zoom level
+                    container: "viewDiv01", // Div element
+
+                });
+                const view02 = new MapView({
+                    map: map,
+                    center: [-119, 35.027], // Longitude, latitude
+                    zoom: 3, // Zoom level
+                    container: "viewDiv02" // Div element
+                });
+
+                const layer_1 = new FLayer({
+                    title: "Layer Feature Service",
+                    url: "https://services9.arcgis.com/S990USlhfgpUmWKm/arcgis/rest/services/TestCN_34Capital_Population/FeatureServer",
+                    visible: false
+                });
+
+                const layer_2 = new FLayer({
+                    title: "Layer Map Service",
+                    url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/CHN_Boundaries_2020/FeatureServer/1",
+                    visible: false
+                });
+                const csvLayer = new CSVLayer({
+                    url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv",
+                    copyright: "USGS Earthquakes"
+                });
+                map.add(csvLayer);
+
+                // const layer_3 = new MapImageLayer({
+
+                //     title: "Dynamic Map Service",
+                //     url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Earthquakes_Since1970/MapServer"
+                // });
+
+                // const layer_4 = new TileLayer({
+                //     title: "TLayer",
+                //     url: "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
+                // });
+
+                // const layer_5 = new MapImageLayer({
+                //     title: "MLayer from Tiles",
+                //     url: "https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
+                // });
+
+                // const llist = new LayerList({
+                //     view: view_gis2018
+                // });
+
+                // view_gis2018.ui.add(llist, {
+                //     position: "top-right"
+                // });
+
+                map.add(layer_1);
+                map.add(layer_2);
+                // map.add(layer_3);
+                // map.add(layer_4);
+                // map.add(layer_5);
+                // *****************3_scaleR************************
+                const inp = document.getElementById("ruler").clientWidth;
+                function scaleR() {
+
+                    console.log("比例尺" + view01.resolution / 1000);
+                    var rulerCD = view01.resolution / 100;
+                    ruler.style.width = rulerCD + "px";
+                    document.getElementById("ruler").innerHTML = rulerCD.toFixed(2);
+
+                };
+
+
+                // *****************2_replace************************
+                const it = document.getElementById("innerText");
+                function replace() {
+
+                    it.innerText = "共有图层数为：" + map.layers.length;
+
+                };
+                replace();
+                // *****************MissionOne************************
+                const basemap01 = document.getElementById("basemap01");
+                basemap01.onclick = function () {
+                    map.basemap = "gray-vector";
+                };
+                const basemap02 = document.getElementById("basemap02");
+                basemap02.onclick = function () {
+                    map.basemap = "hybrid";
+                };
+
+                // *****************MissionTwo************************
+
+                const layer01 = document.getElementById("layer01");
+                const del01 = document.getElementById("del01");
+                const layer02 = document.getElementById("layer02");
+                const del02 = document.getElementById("del02");
+                del01.onclick = function () {
+                    layer01.parentNode.removeChild(layer01);
+                    map.layers.remove(layer_1);
+                    replace();
+                };
+                del02.onclick = function () {
+                    layer02.parentNode.removeChild(layer02);
+                    map.layers.remove(layer_2);
+                    replace();
+                };
+                vis01.addEventListener("change", () => {
+                    layer_1.visible = vis01.checked;
+
+                });
+                vis02.addEventListener("change", () => {
+                    layer_2.visible = vis02.checked;
+
+                });
+                // *****************MissionThree************************
+
+                // 显示地理坐标
+                view01.on("pointer-move", function (event) {
+                    // 获取屏幕坐标
+                    // var info = "x: " + event.x.toFixed(2) + " y: " + event.y.toFixed(2);
+                    // 屏幕坐标转换为地理坐标                    
+                    var info = "x: " + view01.toMap(event).latitude.toFixed(2) + " y: " + view01.toMap(event).longitude.toFixed(2);
+                    document.getElementById("zb").innerHTML = info;
+                });
+                view02.on("pointer-move", function (event) {
+                    // 获取屏幕坐标
+                    // var info = "x: " + event.x.toFixed(2) + " y: " + event.y.toFixed(2);
+                    // 屏幕坐标转换为地理坐标                    
+                    var info = "x: " + view02.toMap(event).latitude.toFixed(2) + " y: " + view02.toMap(event).longitude.toFixed(2);
+                    document.getElementById("zb").innerHTML = info;
+                });
+
+                //*****************MissionFour************************
+                watchUtils.whenTrue(view01, "stationary", function () {
+                    scaleR();
+                    // Get the new center of the view only when view is stationary.
+                    if (view01.center) {
+                        view02.center = view01.center;
+                    }
+
+                    // Get the new extent of the view only when view is stationary.
+                    if (view01.extent) {
+                        view02.extent = view01.extent;
+
+
+                    }
+                });
+                watchUtils.whenTrue(view02, "stationary", function () {
+                    // Get the new center of the view only when view is stationary.
+                    if (view02.center) {
+                        view01.center = view02.center;
+                    }
+
+                    // Get the new extent of the view only when view is stationary.
+                    if (view02.extent) {
+                        view01.extent = view02.extent;
+
+                    }
+                });
+                //*****************MissionFive************************
+                view01.when(() => {
+                    view01.allLayerViews
+                    view01.magnifier.visible = true;
+                    view01.magnifier.size = 200;
+                    view01.magnifier.overlayEnabled = false;
+                    const offset = view01.magnifier.size / 2;
+                    view01.magnifier.offset = { x: offset, y: offset };
+
+                    //The magnifier will be displayed whenever the cursor hovers over the map.
+                    view01.on("pointer-move", function (event) {
+                        view01.magnifier.position = { x: event.x, y: event.y };
+                    });
+                });
+                view02.when(() => {
+                    view02.magnifier.visible = true;
+                    view02.magnifier.size = 200;
+                    const offset = view01.magnifier.size / 2;
+                    view02.magnifier.offset = { x: offset, y: offset };
+
+                    //The magnifier will be displayed whenever the cursor hovers over the map.
+                    view02.on("pointer-move", function (event) {
+                        view02.magnifier.position = { x: event.x, y: event.y };
+                    });
+                });
+
+            });
+
+
+    </script>
+
+</head>
+
+<body>
+    <div id="viewDiv01" class="viewDivBase"></div>
+    <div id="viewDiv02" class="viewDivBase"></div>
+
+    <span id="basemapSwich" class="esri-widget">
+        <button class="esri-button style-button" id="basemap01">gray-vector</button>
+        <button class="esri-button style-button" id="basemap02">hybrid</button>
+    </span>
+    <span id="LayerCollection" class="esri-widget">
+        <span id="layer01" style="background-color: rgb(255, 196, 108);"><input type="checkbox" id="vis01" /><button
+                id="del01"></button>Layer01<span id="mag1">放大镜</span><br></span>
+        <span id="layer02" style="background-color: rgb(186, 255, 108);"><input type="checkbox" id="vis02" /><button
+                id="del02"></button>Layer02<br></span>
+
+        <span id="innerText">共有图层数</span>
+    </span>
+    <span id="co" class="esri-widget">
+        <div id="demo1">
+            <p><span id="zb"></span></p>
+        </div>
+    </span>
+    <div id="ruler" style="width: 10px;"></div>
+
+</body>
+
+</html>
