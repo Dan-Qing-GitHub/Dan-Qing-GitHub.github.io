@@ -10,6 +10,7 @@
 亮点：
   1.图层以混合模式叠加在底图上，避免了地名的遮盖，且不需要增加透明度。
   2.部分数据渲染时增加了Effect效果，使图层展示更加有趣。
-  
- 数据类型：主要为geojson数据
- 数据源：联合国难民署
+ 
+ 图层主要为geojson格式，详细数据可查看：https://github.com/Dan-Qing-GitHub/Data
+ 地理空间数据来源：ArcGIS Living Atlas of the World
+ 难民数据源：联合国难民署
